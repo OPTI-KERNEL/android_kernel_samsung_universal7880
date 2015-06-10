@@ -619,37 +619,21 @@ config TCP_CONG_DCTCP
 	For further details see:
 	  http://simula.stanford.edu/~alizade/Site/DCTCP_files/dctcp-final.pdf
 
-config TCP_CONG_LIA
-	tristate "MPTCP Linked Increase"
-	depends on MPTCP
+config TCP_CONG_CDG
+	tristate "CAIA Delay-Gradient (CDG)"
 	default n
 	---help---
-	MultiPath TCP Linked Increase Congestion Control
-	To enable it, just put 'lia' in tcp_congestion_control
+	CAIA Delay-Gradient (CDG) is a TCP congestion control that modifies
+	the TCP sender in order to:
 
-config TCP_CONG_OLIA
-	tristate "MPTCP Opportunistic Linked Increase"
-	depends on MPTCP
-	default n
-	---help---
-	MultiPath TCP Opportunistic Linked Increase Congestion Control
-	To enable it, just put 'olia' in tcp_congestion_control
+	  o Use the delay gradient as a congestion signal.
+	  o Back off with an average probability that is independent of the RTT.
+	  o Coexist with flows that use loss-based congestion control.
+	  o Tolerate packet loss unrelated to congestion.
 
-config TCP_CONG_WVEGAS
-	tristate "MPTCP WVEGAS CONGESTION CONTROL"
-	depends on MPTCP
-	default n
-	---help---
-	wVegas congestion control for MPTCP
-	To enable it, just put 'wvegas' in tcp_congestion_control
-
-config TCP_CONG_BALIA
-	tristate "MPTCP BALIA CONGESTION CONTROL"
-	depends on MPTCP
-	default n
-	---help---
-	Multipath TCP Balanced Linked Adaptation Congestion Control
-	To enable it, just put 'balia' in tcp_congestion_control
+	For further details see:
+	  D.A. Hayes and G. Armitage. "Revisiting TCP congestion control using
+	  delay gradients." In Networking 2011. Preprint: http://goo.gl/No3vdg
 
 choice
 	prompt "Default TCP congestion control"
@@ -682,17 +666,8 @@ choice
 	config DEFAULT_DCTCP
 		bool "DCTCP" if TCP_CONG_DCTCP=y
 
-	config DEFAULT_LIA
-		bool "Lia" if TCP_CONG_LIA=y
-
-	config DEFAULT_OLIA
-		bool "Olia" if TCP_CONG_OLIA=y
-
-	config DEFAULT_WVEGAS
-		bool "Wvegas" if TCP_CONG_WVEGAS=y
-
-	config DEFAULT_BALIA
-		bool "Balia" if TCP_CONG_BALIA=y
+	config DEFAULT_CDG
+		bool "CDG" if TCP_CONG_CDG=y
 
 	config DEFAULT_RENO
 		bool "Reno"
@@ -714,11 +689,9 @@ config DEFAULT_TCP_CONG
 	default "vegas" if DEFAULT_VEGAS
 	default "westwood" if DEFAULT_WESTWOOD
 	default "veno" if DEFAULT_VENO
-	default "lia" if DEFAULT_LIA
-	default "wvegas" if DEFAULT_WVEGAS
-	default "balia" if DEFAULT_BALIA
 	default "reno" if DEFAULT_RENO
 	default "dctcp" if DEFAULT_DCTCP
+	default "cdg" if DEFAULT_CDG
 	default "cubic"
 
 config TCP_MD5SIG
