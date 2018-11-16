@@ -45,6 +45,9 @@
 #include <media/v4l2-subdev.h>
 #include <soc/samsung/exynos-powermode.h>
 #include <soc/samsung/bts.h>
+#ifdef CONFIG_POWERSUSPEND
+#include <linux/powersuspend.h>
+#endif
 
 #include "decon.h"
 #include "dsim.h"
@@ -1371,6 +1374,9 @@ static int decon_blank(int blank_mode, struct fb_info *info)
 #ifdef CONFIG_POWERSUSPEND
 		set_power_suspend_state_panel_hook(POWER_SUSPEND_ACTIVE);
 #endif
+#ifdef CONFIG_POWERSUSPEND
+		set_power_suspend_state_panel_hook(POWER_SUSPEND_ACTIVE);
+#endif
 		if (ret) {
 			decon_err("skipped to disable decon\n");
 			goto blank_exit;
@@ -1384,6 +1390,9 @@ static int decon_blank(int blank_mode, struct fb_info *info)
 	case FB_BLANK_UNBLANK:
 		DISP_SS_EVENT_LOG(DISP_EVT_UNBLANK, &decon->sd, ktime_set(0, 0));
 		ret = decon_enable(decon);
+#ifdef CONFIG_POWERSUSPEND
+		set_power_suspend_state_panel_hook(POWER_SUSPEND_INACTIVE);
+#endif
 #ifdef CONFIG_POWERSUSPEND
 		set_power_suspend_state_panel_hook(POWER_SUSPEND_INACTIVE);
 #endif
